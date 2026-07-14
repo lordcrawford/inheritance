@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useLayoutEffect, useState } from 'react';
 import CDViewer from './CDViewer';
 
 const TRACKS = [
@@ -108,8 +108,11 @@ export default function StereoSystem() {
   const [xfadeOn,   setXfadeOn]   = useState(false);
   const [xfadeTime, setXfadeTime] = useState(4);
   const [tooltipIdx, setTooltipIdx] = useState(0);
+  const [scaleLayout, setScaleLayout] = useState({ scale: 1, height: 0 });
 
   // DOM refs
+  const scaleContainerRef = useRef(null);
+  const scaleContentRef   = useRef(null);
   const trayRef         = useRef(null);
   const spinCDRef       = useRef(null);
   const deckTextRef     = useRef(null);
@@ -154,6 +157,24 @@ export default function StereoSystem() {
   useEffect(() => {
     if (volKnobRef.current)  volKnobRef.current.style.transform  = `rotate(${(volumeRef.current * 270) - 135}deg)`;
     if (xfadKnobRef.current) xfadKnobRef.current.style.transform = `rotate(${((xfadeRef.current.time - 0.5) / 9.5) * 270 - 135}deg)`;
+  }, []);
+
+  useLayoutEffect(() => {
+    function updateScale() {
+      const container = scaleContainerRef.current, content = scaleContentRef.current;
+      if (!container || !content) return;
+      const containerWidth = container.offsetWidth;
+      const naturalWidth = content.offsetWidth;
+      const naturalHeight = content.offsetHeight;
+      if (naturalWidth > 0) {
+        const scale = containerWidth / naturalWidth;
+        setScaleLayout({ scale, height: naturalHeight * scale });
+      }
+    }
+    updateScale();
+    const ro = new ResizeObserver(updateScale);
+    if (scaleContainerRef.current) ro.observe(scaleContainerRef.current);
+    return () => ro.disconnect();
   }, []);
 
   useEffect(() => {
@@ -422,7 +443,8 @@ export default function StereoSystem() {
 
   return (
     <>
-    <div style={{ fontFamily: 'sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '48px', padding: '32px 0 40px', minHeight: '600px', transform: 'scale(1.1)', transformOrigin: 'center center' }}>
+    <div ref={scaleContainerRef} style={{ width: '80%', display: 'flex', justifyContent: 'center', overflow: 'hidden', height: scaleLayout.height || undefined }}>
+    <div ref={scaleContentRef} style={{ fontFamily: 'sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '48px', padding: '32px 0 40px', minHeight: '600px', transform: `scale(${scaleLayout.scale})`, transformOrigin: 'top center' }}>
 
       {/* CD — 3D model, click to insert */}
       <CDViewer
@@ -589,6 +611,7 @@ export default function StereoSystem() {
       </div>
 
     </div>
+    </div>
 
     {/* Tooltip overlay — fixed to viewport, outside transformed ancestor */}
     <div style={{ position: 'fixed', top: '20px', right: '20px', zIndex: 200, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '10px', pointerEvents: 'none' }}>
@@ -600,14 +623,21 @@ export default function StereoSystem() {
       </div>
       {tooltipIdx > 0 && (
         <div
-          style={{ fontFamily: '"Courier New", Courier, monospace', fontSize: '14px', color: '#fff', background: 'rgba(8,8,8,0.9)', borderRadius: '4px', padding: '16px 18px', maxWidth: '560px', lineHeight: '1.65', border: '1px solid #252525', pointerEvents: 'auto' }}
+          style={{ position: 'relative', fontFamily: '"Courier New", Courier, monospace', fontSize: '14px', color: '#fff', background: 'rgba(8,8,8,0.9)', borderRadius: '4px', padding: '16px 18px', maxWidth: '560px', lineHeight: '1.65', border: '1px solid #252525', pointerEvents: 'auto' }}
         >
+          <div
+            onClick={() => setTooltipIdx(0)}
+            style={{ position: 'absolute', top: '10px', right: '14px', cursor: 'pointer', color: '#888', fontSize: '20px', lineHeight: 1, padding: '2px 4px' }}
+            title="Close"
+          >
+            ×
+          </div>
           <div style={{ display: 'flex', justifyContent: 'center', gap: '4px', marginBottom: '8px' }}>
             {[1, 2, 3].map(n => (
               <span key={n} style={{ width: '5px', height: '5px', borderRadius: '50%', display: 'inline-block', background: n === tooltipIdx ? '#fff' : '#555' }} />
             ))}
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', marginBottom: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', marginBottom: '10px', paddingRight: '22px' }}>
             <div
               onClick={prevTooltip}
               style={{ cursor: 'pointer', color: '#888', fontSize: '18px', lineHeight: 1, padding: '2px 6px' }}
@@ -624,13 +654,6 @@ export default function StereoSystem() {
               title="Next"
             >
               ›
-            </div>
-            <div
-              onClick={() => setTooltipIdx(0)}
-              style={{ cursor: 'pointer', color: '#888', fontSize: '20px', lineHeight: 1, padding: '2px 4px' }}
-              title="Close"
-            >
-              ×
             </div>
           </div>
           {TOOLTIP_SECTIONS[tooltipIdx].points.map((point, i) => (

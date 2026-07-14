@@ -50,6 +50,17 @@
   }
 }
 
+.transport-btn {
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+.transport-btn:hover:not(:disabled) {
+  filter: brightness(1.25);
+  transform: scale(1.06);
+}
+.transport-btn:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes spinCD {
   from { transform: rotateX(18deg) rotateY(0deg); }

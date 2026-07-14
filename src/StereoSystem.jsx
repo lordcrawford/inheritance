@@ -545,7 +545,7 @@ export default function StereoSystem() {
               <div style={{ width: '90px', height: '25px', background: '#001800', border: '1px solid #003300', borderRadius: '2px', display: 'flex', alignItems: 'center', padding: '0 7px' }}>
                 <span ref={deckTextRef} style={{ fontSize: '11px', color: '#00cc44', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>NO DISC</span>
               </div>
-              <button onClick={handleEject} disabled={!inserted}
+              <button onClick={handleEject} disabled={!inserted} className="transport-btn"
                 style={{ padding: '3px 8px', fontSize: '13px', borderRadius: '2px', border: '1px solid #444', background: '#2a2a2a', color: inserted ? '#aaa' : '#444', cursor: inserted ? 'pointer' : 'default', lineHeight: 1 }}>⏏</button>
             </div>
             {/* Controls row */}
@@ -589,13 +589,13 @@ export default function StereoSystem() {
 
               {/* Transport */}
               <div style={{ display: 'flex', gap: '11px', alignItems: 'center', flexShrink: 0 }}>
-                <button onClick={handleLast} disabled={!inserted}
+                <button onClick={handleLast} disabled={!inserted} className="transport-btn"
                   style={{ padding: '11px 22px', fontSize: '12px', fontWeight: 700, fontFamily: 'monospace', borderRadius: '3px', border: '1px solid #444', background: '#2a2a2a', color: inserted ? '#ccc' : '#444', cursor: inserted ? 'pointer' : 'default' }}>◀◀</button>
-                <button onClick={handlePlay} disabled={!inserted || playing}
+                <button onClick={handlePlay} disabled={!inserted || playing} className="transport-btn"
                   style={{ padding: '11px 28px', fontSize: '12px', fontWeight: 700, fontFamily: 'monospace', borderRadius: '3px', border: `1px solid ${playing ? '#00cc44' : '#444'}`, background: playing ? '#002200' : '#2a2a2a', color: playing ? '#00cc44' : (inserted ? '#ccc' : '#444'), cursor: (inserted && !playing) ? 'pointer' : 'default' }}>▶</button>
-                <button onClick={handlePause} disabled={!inserted || !playing}
+                <button onClick={handlePause} disabled={!inserted || !playing} className="transport-btn"
                   style={{ padding: '11px 28px', fontSize: '12px', fontWeight: 700, fontFamily: 'monospace', borderRadius: '3px', border: `1px solid ${(inserted && !playing) ? '#cc4400' : '#444'}`, background: (inserted && !playing) ? '#220000' : '#2a2a2a', color: (inserted && !playing) ? '#cc4400' : ((inserted && playing) ? '#ccc' : '#444'), cursor: (inserted && playing) ? 'pointer' : 'default' }}>⏸</button>
-                <button onClick={handleNext} disabled={!inserted}
+                <button onClick={handleNext} disabled={!inserted} className="transport-btn"
                   style={{ padding: '11px 22px', fontSize: '12px', fontWeight: 700, fontFamily: 'monospace', borderRadius: '3px', border: '1px solid #444', background: '#2a2a2a', color: inserted ? '#ccc' : '#444', cursor: inserted ? 'pointer' : 'default' }}>▶▶</button>
               </div>
             </div>

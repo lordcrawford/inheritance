@@ -644,7 +644,7 @@ export default function StereoSystem() {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', marginBottom: '10px' }}>
             <div
               onClick={prevTooltip}
-              style={{ cursor: 'pointer', color: '#888', fontSize: '18px', lineHeight: 1, padding: '2px 6px' }}
+              style={{ cursor: 'pointer', color: '#888', fontSize: '28px', lineHeight: 1, padding: '2px 6px' }}
               title="Previous"
             >
               ‹
@@ -661,7 +661,7 @@ export default function StereoSystem() {
             </div>
             <div
               onClick={nextTooltip}
-              style={{ cursor: 'pointer', color: '#888', fontSize: '18px', lineHeight: 1, padding: '2px 6px' }}
+              style={{ cursor: 'pointer', color: '#888', fontSize: '28px', lineHeight: 1, padding: '2px 6px' }}
               title="Next"
             >
               ›

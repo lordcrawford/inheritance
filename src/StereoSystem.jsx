@@ -461,11 +461,16 @@ export default function StereoSystem() {
     <div ref={scaleContentRef} style={{ fontFamily: 'sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '48px', padding: '32px 0 40px', minHeight: '600px', flexShrink: 0, transform: `scale(${scaleLayout.scale})`, transformOrigin: 'top center' }}>
 
       {/* CD — 3D model, click to insert */}
-      <CDViewer
-        phase={cdPhase}
-        onClick={triggerInsert}
-        onInsertDone={() => setCdPhase('inserted')}
-      />
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+        <CDViewer
+          phase={cdPhase}
+          onClick={triggerInsert}
+          onInsertDone={() => setCdPhase('inserted')}
+        />
+        {!inserted && (
+          <div style={{ fontFamily: 'cursive', fontSize: '14px', color: '#888' }}>click cd to insert</div>
+        )}
+      </div>
 
       {/* Speakers + Rack */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>

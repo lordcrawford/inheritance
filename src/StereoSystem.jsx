@@ -686,18 +686,18 @@ export default function StereoSystem() {
 
         {/* CD — 3D model, click to insert */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-          <div style={{ fontFamily: 'cursive', fontSize: '25px', color: '#ffffff', width: '100%', textAlign: 'center', opacity: inserted ? 0 : 1, transition: 'opacity 0.3s' }}>three sounds</div>
+          <div style={{ fontFamily: 'cursive', fontSize: '29px', color: '#ffffff', width: '100%', textAlign: 'center', opacity: inserted ? 0 : 1, transition: 'opacity 0.3s' }}>three sounds</div>
           <CDViewer
             phase={cdPhase}
             onClick={triggerInsert}
             onInsertDone={() => { setCdPhase('inserted'); handlePlay(); }}
-            size={190}
+            size={220}
           />
-          <div style={{ fontFamily: 'cursive', fontSize: '17px', color: '#ffffff', width: '100%', textAlign: 'center', opacity: inserted ? 0 : 1, transition: 'opacity 0.3s' }}>click cd to insert</div>
+          <div style={{ fontFamily: 'cursive', fontSize: '19px', color: '#ffffff', width: '100%', textAlign: 'center', opacity: inserted ? 0 : 1, transition: 'opacity 0.3s' }}>click cd to insert</div>
         </div>
 
         {/* Simplified deck panel */}
-        <div style={{ width: '100%', maxWidth: '380px', marginTop: '80px', background: '#141414', borderRadius: '6px', border: '2px solid #3a3a3a', padding: '10px', display: 'flex', flexDirection: 'column', gap: '8px', boxSizing: 'border-box', boxShadow: '0 4px 20px rgba(0,0,0,0.6)' }}>
+        <div style={{ width: '100%', maxWidth: '380px', marginTop: '43px', background: '#141414', borderRadius: '6px', border: '2px solid #3a3a3a', padding: '10px', display: 'flex', flexDirection: 'column', gap: '8px', boxSizing: 'border-box', boxShadow: '0 4px 20px rgba(0,0,0,0.6)' }}>
 
           {/* Deck text + LED + eject */}
           <div style={{ background: '#212121', borderRadius: '3px', border: '1px solid #444', padding: '8px 10px', display: 'flex', alignItems: 'center', gap: '10px' }}>

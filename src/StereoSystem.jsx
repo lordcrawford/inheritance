@@ -258,6 +258,7 @@ export default function StereoSystem() {
 
   useEffect(() => {
     const a = new Audio(TRACKS[0].src);
+    a.preload = 'auto';
     a.volume = volumeRef.current;
     audioRef.current = a;
     function onEnded() {
@@ -266,7 +267,19 @@ export default function StereoSystem() {
       switchTrack((trackRef.current + 1) % TRACKS.length, true);
     }
     a.addEventListener('ended', onEnded);
-    return () => a.pause();
+
+    // preload the rest of the tracks up front so switching mid-session is instant instead of
+    // waiting on a fresh network fetch (most noticeable on mobile connections) — kept in refs
+    // so the browser doesn't abort the download once these fall out of scope
+    const preloaders = TRACKS.slice(1).map(t => {
+      const pa = new Audio();
+      pa.preload = 'auto';
+      pa.src = t.src;
+      pa.load();
+      return pa;
+    });
+
+    return () => { a.pause(); preloaders.forEach(pa => pa.pause()); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

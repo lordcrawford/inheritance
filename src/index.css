@@ -50,6 +50,13 @@
   }
 }
 
+.cd-hover {
+  transition: transform 0.6s ease;
+}
+.cd-hover:hover {
+  transform: scale(1.18);
+}
+
 .transport-btn {
   transition: transform 0.15s ease, filter 0.15s ease;
 }
@@ -61,11 +68,16 @@
   transform: scale(0.94);
 }
 
-@keyframes spin { to { transform: rotate(360deg); } }
-@keyframes spinCD {
-  from { transform: rotateX(18deg) rotateY(0deg); }
-  to   { transform: rotateX(18deg) rotateY(360deg); }
+.info-dot {
+  transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
 }
+.info-dot:hover {
+  background: #222;
+  border-color: #f2f0eb;
+  transform: scale(1.1);
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
 
 
 html, body {

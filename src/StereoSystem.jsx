@@ -365,20 +365,28 @@ export default function StereoSystem() {
     insertedRef.current = true;
     setInserted(true);
 
-    // Init Web Audio on user gesture
+    // Init Web Audio on user gesture — a <audio> element can only ever be connected to a single
+    // MediaElementAudioSourceNode for its whole lifetime, so on re-insert (eject, then insert again)
+    // just resume the existing graph instead of rebuilding it (rebuilding throws, which silently
+    // kills the analyser and the background stops reacting to audio, even though playback keeps working)
     try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      audioCtxRef.current = ctx;
-      const an = ctx.createAnalyser();
-      an.fftSize = 128; an.smoothingTimeConstant = 0.75;
-      analyserRef.current = an; freqDataRef.current = new Uint8Array(an.frequencyBinCount);
-      const g = ctx.createGain(); g.gain.value = mutedRef.current ? 0 : volumeRef.current;
-      gainRef.current = g;
-      ctx.createMediaElementSource(audioRef.current).connect(g);
-      g.connect(an); an.connect(ctx.destination);
-      // once routed through createMediaElementSource, the element's own native volume still
-      // gates output ahead of the gain node — keep it at unity so the gain node is in sole control
-      audioRef.current.volume = 1;
+      if (!audioCtxRef.current) {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        audioCtxRef.current = ctx;
+        const an = ctx.createAnalyser();
+        an.fftSize = 128; an.smoothingTimeConstant = 0.75;
+        analyserRef.current = an; freqDataRef.current = new Uint8Array(an.frequencyBinCount);
+        const g = ctx.createGain(); g.gain.value = mutedRef.current ? 0 : volumeRef.current;
+        gainRef.current = g;
+        ctx.createMediaElementSource(audioRef.current).connect(g);
+        g.connect(an); an.connect(ctx.destination);
+        // once routed through createMediaElementSource, the element's own native volume still
+        // gates output ahead of the gain node — keep it at unity so the gain node is in sole control
+        audioRef.current.volume = 1;
+      }
+      // resume synchronously, in the same gesture, rather than relying solely on the later
+      // handlePlay() resume — iOS Safari can refuse to resume a context once user activation lapses
+      if (audioCtxRef.current.state === 'suspended') audioCtxRef.current.resume();
     } catch (e) { console.warn('Web Audio unavailable:', e); }
 
     if (trayRef.current) trayRef.current.style.transform = 'translateX(72px)';
@@ -684,20 +692,20 @@ export default function StereoSystem() {
         </div>
 
         {/* Simplified deck panel */}
-        <div style={{ width: '100%', maxWidth: '380px', background: stereoColor, borderRadius: '6px', border: '2px solid #333', padding: '10px', display: 'flex', flexDirection: 'column', gap: '8px', boxSizing: 'border-box' }}>
+        <div style={{ width: '100%', maxWidth: '380px', marginTop: '22px', background: '#141414', borderRadius: '6px', border: '2px solid #3a3a3a', padding: '10px', display: 'flex', flexDirection: 'column', gap: '8px', boxSizing: 'border-box', boxShadow: '0 4px 20px rgba(0,0,0,0.6)' }}>
 
           {/* Deck text + LED + eject */}
-          <div style={{ background: '#1e1e1e', borderRadius: '3px', border: '1px solid #333', padding: '8px 10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ background: '#212121', borderRadius: '3px', border: '1px solid #444', padding: '8px 10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
             <div ref={ampLedRef} style={{ width: '9px', height: '9px', borderRadius: '50%', background: '#cc4400', border: '1px solid #aa3300', flexShrink: 0 }} />
             <div style={{ flex: 1, height: '28px', background: '#001800', border: '1px solid #003300', borderRadius: '2px', display: 'flex', alignItems: 'center', padding: '0 10px' }}>
               <span ref={deckTextRef} style={{ fontSize: '12px', color: '#00cc44', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>NO DISC</span>
             </div>
             <button onClick={handleEject} disabled={!inserted} className="transport-btn"
-              style={{ padding: '5px 10px', fontSize: '14px', borderRadius: '3px', border: '1px solid #444', background: '#2a2a2a', color: inserted ? '#aaa' : '#444', cursor: inserted ? 'pointer' : 'default', lineHeight: 1 }}>⏏</button>
+              style={{ padding: '5px 10px', fontSize: '14px', borderRadius: '3px', border: '1px solid #555', background: '#2f2f2f', color: inserted ? '#ccc' : '#555', cursor: inserted ? 'pointer' : 'default', lineHeight: 1 }}>⏏</button>
           </div>
 
           {/* Progress */}
-          <div style={{ background: '#1e1e1e', borderRadius: '3px', border: '1px solid #333', padding: '8px 10px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+          <div style={{ background: '#212121', borderRadius: '3px', border: '1px solid #444', padding: '8px 10px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
             <div style={{ position: 'relative', height: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <div ref={barsRef} style={{ position: 'absolute', left: 0, top: 0, height: '18px', overflow: 'hidden', display: 'flex', gap: '2px', alignItems: 'flex-end', flexShrink: 0 }}>
                 {EQ_DEFAULT.map((h, i) => (
@@ -720,24 +728,24 @@ export default function StereoSystem() {
           {/* Transport */}
           <div style={{ display: 'flex', gap: '8px' }}>
             <button onClick={handleLast} disabled={!inserted} className="transport-btn"
-              style={{ flex: 1, padding: '14px 0', fontSize: '13px', fontWeight: 700, fontFamily: 'monospace', borderRadius: '4px', border: '1px solid #444', background: '#2a2a2a', color: inserted ? '#ccc' : '#444', cursor: inserted ? 'pointer' : 'default' }}>◀◀</button>
+              style={{ flex: 1, padding: '14px 0', fontSize: '13px', fontWeight: 700, fontFamily: 'monospace', borderRadius: '4px', border: '1px solid #555', background: '#2f2f2f', color: inserted ? '#ddd' : '#555', cursor: inserted ? 'pointer' : 'default' }}>◀◀</button>
             <button onClick={handlePlay} disabled={!inserted || playing} className="transport-btn"
-              style={{ flex: 1, padding: '14px 0', fontSize: '13px', fontWeight: 700, fontFamily: 'monospace', borderRadius: '4px', border: `1px solid ${playing ? '#00cc44' : '#444'}`, background: playing ? '#002200' : '#2a2a2a', color: playing ? '#00cc44' : (inserted ? '#ccc' : '#444'), cursor: (inserted && !playing) ? 'pointer' : 'default' }}>▶</button>
+              style={{ flex: 1, padding: '14px 0', fontSize: '13px', fontWeight: 700, fontFamily: 'monospace', borderRadius: '4px', border: `1px solid ${playing ? '#00cc44' : '#555'}`, background: playing ? '#002200' : '#2f2f2f', color: playing ? '#00cc44' : (inserted ? '#ddd' : '#555'), cursor: (inserted && !playing) ? 'pointer' : 'default' }}>▶</button>
             <button onClick={handlePause} disabled={!inserted || !playing} className="transport-btn"
-              style={{ flex: 1, padding: '14px 0', fontSize: '13px', fontWeight: 700, fontFamily: 'monospace', borderRadius: '4px', border: `1px solid ${(inserted && !playing) ? '#cc4400' : '#444'}`, background: (inserted && !playing) ? '#220000' : '#2a2a2a', color: (inserted && !playing) ? '#cc4400' : ((inserted && playing) ? '#ccc' : '#444'), cursor: (inserted && playing) ? 'pointer' : 'default', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+              style={{ flex: 1, padding: '14px 0', fontSize: '13px', fontWeight: 700, fontFamily: 'monospace', borderRadius: '4px', border: `1px solid ${(inserted && !playing) ? '#cc4400' : '#555'}`, background: (inserted && !playing) ? '#220000' : '#2f2f2f', color: (inserted && !playing) ? '#cc4400' : ((inserted && playing) ? '#ddd' : '#555'), cursor: (inserted && playing) ? 'pointer' : 'default', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
               <svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor"><rect x="1" width="4" height="12" /><rect x="7" width="4" height="12" /></svg>
             </button>
             <button onClick={handleNext} disabled={!inserted} className="transport-btn"
-              style={{ flex: 1, padding: '14px 0', fontSize: '13px', fontWeight: 700, fontFamily: 'monospace', borderRadius: '4px', border: '1px solid #444', background: '#2a2a2a', color: inserted ? '#ccc' : '#444', cursor: inserted ? 'pointer' : 'default' }}>▶▶</button>
+              style={{ flex: 1, padding: '14px 0', fontSize: '13px', fontWeight: 700, fontFamily: 'monospace', borderRadius: '4px', border: '1px solid #555', background: '#2f2f2f', color: inserted ? '#ddd' : '#555', cursor: inserted ? 'pointer' : 'default' }}>▶▶</button>
           </div>
 
           {/* Volume */}
-          <div style={{ background: '#1e1e1e', borderRadius: '3px', border: '1px solid #333', padding: '8px 10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ background: '#212121', borderRadius: '3px', border: '1px solid #444', padding: '8px 10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
             <span style={{ fontSize: '11px', color: '#999', fontFamily: 'monospace', width: '30px', flexShrink: 0 }}>VOL</span>
             <input type="range" min="0" max="1" step="0.01" value={volume} onChange={handleVolume} style={{ flex: 1 }} />
             <span style={{ fontSize: '11px', color: '#00cc44', fontFamily: 'monospace', width: '28px', textAlign: 'right', flexShrink: 0 }}>{Math.round(volume * 100)}</span>
             <button onClick={handleMuteToggle} className="transport-btn"
-              style={{ marginLeft: '10px', padding: '5px 9px', fontSize: '11px', fontWeight: 700, fontFamily: 'monospace', borderRadius: '3px', border: `1px solid ${muted ? '#cc4400' : '#444'}`, background: muted ? '#220000' : '#2a2a2a', color: muted ? '#cc4400' : '#aaa', cursor: 'pointer', lineHeight: 1, flexShrink: 0 }}>
+              style={{ marginLeft: '10px', padding: '5px 9px', fontSize: '11px', fontWeight: 700, fontFamily: 'monospace', borderRadius: '3px', border: `1px solid ${muted ? '#cc4400' : '#555'}`, background: muted ? '#220000' : '#2f2f2f', color: muted ? '#cc4400' : '#ccc', cursor: 'pointer', lineHeight: 1, flexShrink: 0 }}>
               MUTE
             </button>
           </div>

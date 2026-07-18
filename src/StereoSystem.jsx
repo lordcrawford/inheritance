@@ -697,7 +697,7 @@ export default function StereoSystem() {
         </div>
 
         {/* Simplified deck panel */}
-        <div style={{ width: '100%', maxWidth: '380px', marginTop: '48px', background: '#141414', borderRadius: '6px', border: '2px solid #3a3a3a', padding: '10px', display: 'flex', flexDirection: 'column', gap: '8px', boxSizing: 'border-box', boxShadow: '0 4px 20px rgba(0,0,0,0.6)' }}>
+        <div style={{ width: '100%', maxWidth: '380px', marginTop: '80px', background: '#141414', borderRadius: '6px', border: '2px solid #3a3a3a', padding: '10px', display: 'flex', flexDirection: 'column', gap: '8px', boxSizing: 'border-box', boxShadow: '0 4px 20px rgba(0,0,0,0.6)' }}>
 
           {/* Deck text + LED + eject */}
           <div style={{ background: '#212121', borderRadius: '3px', border: '1px solid #444', padding: '8px 10px', display: 'flex', alignItems: 'center', gap: '10px' }}>

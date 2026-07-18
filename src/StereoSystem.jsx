@@ -107,11 +107,13 @@ export default function StereoSystem() {
     let curShapeIdx = null, fromShapeIdx = null, shapeTransitionT = 0;
 
     function resize() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      canvas.width = Math.max(window.innerWidth, document.documentElement.clientWidth);
+      canvas.height = Math.max(window.innerHeight, document.documentElement.clientHeight, window.visualViewport?.height || 0);
     }
     resize();
     window.addEventListener('resize', resize);
+    window.addEventListener('orientationchange', resize);
+    window.visualViewport?.addEventListener('resize', resize);
 
     function frame(now) {
       raf = requestAnimationFrame(frame);
@@ -159,7 +161,12 @@ export default function StereoSystem() {
       ctx.restore();
     }
     raf = requestAnimationFrame(frame);
-    return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', resize); };
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', resize);
+      window.removeEventListener('orientationchange', resize);
+      window.visualViewport?.removeEventListener('resize', resize);
+    };
   }, []);
 
   // DOM refs
@@ -625,7 +632,9 @@ export default function StereoSystem() {
                 <button onClick={handlePlay} disabled={!inserted || playing} className="transport-btn"
                   style={{ padding: '11px 28px', fontSize: '12px', fontWeight: 700, fontFamily: 'monospace', borderRadius: '3px', border: `1px solid ${playing ? '#00cc44' : '#444'}`, background: playing ? '#002200' : '#2a2a2a', color: playing ? '#00cc44' : (inserted ? '#ccc' : '#444'), cursor: (inserted && !playing) ? 'pointer' : 'default' }}>▶</button>
                 <button onClick={handlePause} disabled={!inserted || !playing} className="transport-btn"
-                  style={{ padding: '11px 28px', fontSize: '12px', fontWeight: 700, fontFamily: 'monospace', borderRadius: '3px', border: `1px solid ${(inserted && !playing) ? '#cc4400' : '#444'}`, background: (inserted && !playing) ? '#220000' : '#2a2a2a', color: (inserted && !playing) ? '#cc4400' : ((inserted && playing) ? '#ccc' : '#444'), cursor: (inserted && playing) ? 'pointer' : 'default' }}>⏸</button>
+                  style={{ padding: '11px 28px', fontSize: '12px', fontWeight: 700, fontFamily: 'monospace', borderRadius: '3px', border: `1px solid ${(inserted && !playing) ? '#cc4400' : '#444'}`, background: (inserted && !playing) ? '#220000' : '#2a2a2a', color: (inserted && !playing) ? '#cc4400' : ((inserted && playing) ? '#ccc' : '#444'), cursor: (inserted && playing) ? 'pointer' : 'default', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><rect x="1" width="4" height="12" /><rect x="7" width="4" height="12" /></svg>
+                </button>
                 <button onClick={handleNext} disabled={!inserted} className="transport-btn"
                   style={{ padding: '11px 22px', fontSize: '12px', fontWeight: 700, fontFamily: 'monospace', borderRadius: '3px', border: '1px solid #444', background: '#2a2a2a', color: inserted ? '#ccc' : '#444', cursor: inserted ? 'pointer' : 'default' }}>▶▶</button>
               </div>
@@ -660,23 +669,22 @@ export default function StereoSystem() {
     )}
 
     {isMobile && (
-      <div style={{ position: 'relative', zIndex: 1, fontFamily: 'sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px', padding: '0px 16px 40px', width: '100%', boxSizing: 'border-box' }}>
+      <div style={{ position: 'relative', zIndex: 1, fontFamily: 'sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px', padding: '14px 16px 28px', width: '100%', boxSizing: 'border-box' }}>
 
         {/* CD — 3D model, click to insert */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
-          <div style={{ fontFamily: 'cursive', fontSize: '26px', color: '#ffffff', width: '100%', textAlign: 'center', opacity: inserted ? 0 : 1, transition: 'opacity 0.3s', marginTop: '24px' }}>three sounds</div>
-          <div style={{ marginTop: '-21px' }}>
-            <CDViewer
-              phase={cdPhase}
-              onClick={triggerInsert}
-              onInsertDone={() => { setCdPhase('inserted'); handlePlay(); }}
-            />
-          </div>
-          <div style={{ fontFamily: 'cursive', fontSize: '17px', color: '#ffffff', width: '100%', textAlign: 'center', opacity: inserted ? 0 : 1, transition: 'opacity 0.3s', marginTop: '-24px' }}>click cd to insert</div>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+          <div style={{ fontFamily: 'cursive', fontSize: '22px', color: '#ffffff', width: '100%', textAlign: 'center', opacity: inserted ? 0 : 1, transition: 'opacity 0.3s' }}>three sounds</div>
+          <CDViewer
+            phase={cdPhase}
+            onClick={triggerInsert}
+            onInsertDone={() => { setCdPhase('inserted'); handlePlay(); }}
+            size={190}
+          />
+          <div style={{ fontFamily: 'cursive', fontSize: '15px', color: '#ffffff', width: '100%', textAlign: 'center', opacity: inserted ? 0 : 1, transition: 'opacity 0.3s' }}>click cd to insert</div>
         </div>
 
         {/* Simplified deck panel */}
-        <div style={{ width: '100%', maxWidth: '380px', marginTop: '40px', background: stereoColor, borderRadius: '6px', border: '2px solid #333', padding: '10px', display: 'flex', flexDirection: 'column', gap: '8px', boxSizing: 'border-box' }}>
+        <div style={{ width: '100%', maxWidth: '380px', background: stereoColor, borderRadius: '6px', border: '2px solid #333', padding: '10px', display: 'flex', flexDirection: 'column', gap: '8px', boxSizing: 'border-box' }}>
 
           {/* Deck text + LED + eject */}
           <div style={{ background: '#1e1e1e', borderRadius: '3px', border: '1px solid #333', padding: '8px 10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -716,7 +724,9 @@ export default function StereoSystem() {
             <button onClick={handlePlay} disabled={!inserted || playing} className="transport-btn"
               style={{ flex: 1, padding: '14px 0', fontSize: '13px', fontWeight: 700, fontFamily: 'monospace', borderRadius: '4px', border: `1px solid ${playing ? '#00cc44' : '#444'}`, background: playing ? '#002200' : '#2a2a2a', color: playing ? '#00cc44' : (inserted ? '#ccc' : '#444'), cursor: (inserted && !playing) ? 'pointer' : 'default' }}>▶</button>
             <button onClick={handlePause} disabled={!inserted || !playing} className="transport-btn"
-              style={{ flex: 1, padding: '14px 0', fontSize: '13px', fontWeight: 700, fontFamily: 'monospace', borderRadius: '4px', border: `1px solid ${(inserted && !playing) ? '#cc4400' : '#444'}`, background: (inserted && !playing) ? '#220000' : '#2a2a2a', color: (inserted && !playing) ? '#cc4400' : ((inserted && playing) ? '#ccc' : '#444'), cursor: (inserted && playing) ? 'pointer' : 'default' }}>⏸</button>
+              style={{ flex: 1, padding: '14px 0', fontSize: '13px', fontWeight: 700, fontFamily: 'monospace', borderRadius: '4px', border: `1px solid ${(inserted && !playing) ? '#cc4400' : '#444'}`, background: (inserted && !playing) ? '#220000' : '#2a2a2a', color: (inserted && !playing) ? '#cc4400' : ((inserted && playing) ? '#ccc' : '#444'), cursor: (inserted && playing) ? 'pointer' : 'default', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg width="13" height="13" viewBox="0 0 12 12" fill="currentColor"><rect x="1" width="4" height="12" /><rect x="7" width="4" height="12" /></svg>
+            </button>
             <button onClick={handleNext} disabled={!inserted} className="transport-btn"
               style={{ flex: 1, padding: '14px 0', fontSize: '13px', fontWeight: 700, fontFamily: 'monospace', borderRadius: '4px', border: '1px solid #444', background: '#2a2a2a', color: inserted ? '#ccc' : '#444', cursor: inserted ? 'pointer' : 'default' }}>▶▶</button>
           </div>

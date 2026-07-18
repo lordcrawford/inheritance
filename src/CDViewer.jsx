@@ -67,7 +67,7 @@ function CDMesh({ phase, onInsertDone, hoveredRef }) {
   )
 }
 
-export default function CDViewer({ phase, onClick, onInsertDone }) {
+export default function CDViewer({ phase, onClick, onInsertDone, size = 310 }) {
   const hoveredRef = useRef(false)
   return (
     <div
@@ -76,7 +76,7 @@ export default function CDViewer({ phase, onClick, onInsertDone }) {
       onMouseLeave={() => { hoveredRef.current = false }}
       title={phase === 'floating' ? 'Click to insert' : ''}
       className={phase === 'floating' ? 'cd-hover' : undefined}
-      style={{ width: 310, height: 310, cursor: phase === 'floating' ? 'pointer' : 'default', flexShrink: 0 }}
+      style={{ width: size, height: size, cursor: phase === 'floating' ? 'pointer' : 'default', flexShrink: 0 }}
     >
       <Canvas
         gl={{ alpha: true, antialias: true }}

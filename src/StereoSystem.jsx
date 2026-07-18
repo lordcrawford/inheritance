@@ -633,7 +633,7 @@ export default function StereoSystem() {
                   style={{ padding: '11px 28px', fontSize: '12px', fontWeight: 700, fontFamily: 'monospace', borderRadius: '3px', border: `1px solid ${playing ? '#00cc44' : '#444'}`, background: playing ? '#002200' : '#2a2a2a', color: playing ? '#00cc44' : (inserted ? '#ccc' : '#444'), cursor: (inserted && !playing) ? 'pointer' : 'default' }}>▶</button>
                 <button onClick={handlePause} disabled={!inserted || !playing} className="transport-btn"
                   style={{ padding: '11px 28px', fontSize: '12px', fontWeight: 700, fontFamily: 'monospace', borderRadius: '3px', border: `1px solid ${(inserted && !playing) ? '#cc4400' : '#444'}`, background: (inserted && !playing) ? '#220000' : '#2a2a2a', color: (inserted && !playing) ? '#cc4400' : ((inserted && playing) ? '#ccc' : '#444'), cursor: (inserted && playing) ? 'pointer' : 'default', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><rect x="1" width="4" height="12" /><rect x="7" width="4" height="12" /></svg>
+                  <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor"><rect x="1" width="4" height="12" /><rect x="7" width="4" height="12" /></svg>
                 </button>
                 <button onClick={handleNext} disabled={!inserted} className="transport-btn"
                   style={{ padding: '11px 22px', fontSize: '12px', fontWeight: 700, fontFamily: 'monospace', borderRadius: '3px', border: '1px solid #444', background: '#2a2a2a', color: inserted ? '#ccc' : '#444', cursor: inserted ? 'pointer' : 'default' }}>▶▶</button>
@@ -669,18 +669,18 @@ export default function StereoSystem() {
     )}
 
     {isMobile && (
-      <div style={{ position: 'relative', zIndex: 1, fontFamily: 'sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px', padding: '14px 16px 28px', width: '100%', boxSizing: 'border-box' }}>
+      <div style={{ position: 'relative', zIndex: 1, fontFamily: 'sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px', padding: 'calc(14px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) calc(28px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left))', width: '100%', boxSizing: 'border-box' }}>
 
         {/* CD — 3D model, click to insert */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-          <div style={{ fontFamily: 'cursive', fontSize: '22px', color: '#ffffff', width: '100%', textAlign: 'center', opacity: inserted ? 0 : 1, transition: 'opacity 0.3s' }}>three sounds</div>
+          <div style={{ fontFamily: 'cursive', fontSize: '25px', color: '#ffffff', width: '100%', textAlign: 'center', opacity: inserted ? 0 : 1, transition: 'opacity 0.3s' }}>three sounds</div>
           <CDViewer
             phase={cdPhase}
             onClick={triggerInsert}
             onInsertDone={() => { setCdPhase('inserted'); handlePlay(); }}
             size={190}
           />
-          <div style={{ fontFamily: 'cursive', fontSize: '15px', color: '#ffffff', width: '100%', textAlign: 'center', opacity: inserted ? 0 : 1, transition: 'opacity 0.3s' }}>click cd to insert</div>
+          <div style={{ fontFamily: 'cursive', fontSize: '17px', color: '#ffffff', width: '100%', textAlign: 'center', opacity: inserted ? 0 : 1, transition: 'opacity 0.3s' }}>click cd to insert</div>
         </div>
 
         {/* Simplified deck panel */}
@@ -725,7 +725,7 @@ export default function StereoSystem() {
               style={{ flex: 1, padding: '14px 0', fontSize: '13px', fontWeight: 700, fontFamily: 'monospace', borderRadius: '4px', border: `1px solid ${playing ? '#00cc44' : '#444'}`, background: playing ? '#002200' : '#2a2a2a', color: playing ? '#00cc44' : (inserted ? '#ccc' : '#444'), cursor: (inserted && !playing) ? 'pointer' : 'default' }}>▶</button>
             <button onClick={handlePause} disabled={!inserted || !playing} className="transport-btn"
               style={{ flex: 1, padding: '14px 0', fontSize: '13px', fontWeight: 700, fontFamily: 'monospace', borderRadius: '4px', border: `1px solid ${(inserted && !playing) ? '#cc4400' : '#444'}`, background: (inserted && !playing) ? '#220000' : '#2a2a2a', color: (inserted && !playing) ? '#cc4400' : ((inserted && playing) ? '#ccc' : '#444'), cursor: (inserted && playing) ? 'pointer' : 'default', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width="13" height="13" viewBox="0 0 12 12" fill="currentColor"><rect x="1" width="4" height="12" /><rect x="7" width="4" height="12" /></svg>
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor"><rect x="1" width="4" height="12" /><rect x="7" width="4" height="12" /></svg>
             </button>
             <button onClick={handleNext} disabled={!inserted} className="transport-btn"
               style={{ flex: 1, padding: '14px 0', fontSize: '13px', fontWeight: 700, fontFamily: 'monospace', borderRadius: '4px', border: '1px solid #444', background: '#2a2a2a', color: inserted ? '#ccc' : '#444', cursor: inserted ? 'pointer' : 'default' }}>▶▶</button>
@@ -746,7 +746,7 @@ export default function StereoSystem() {
     )}
 
     {/* Info dot — fixed to viewport, outside transformed ancestor */}
-    <div style={{ position: 'fixed', top: '20px', right: '20px', zIndex: 200, pointerEvents: 'none' }}>
+    <div style={{ position: 'fixed', top: 'calc(20px + env(safe-area-inset-top))', right: 'calc(20px + env(safe-area-inset-right))', zIndex: 200, pointerEvents: 'none' }}>
       <div
         ref={tooltipDotRef}
         className="info-dot"
@@ -760,7 +760,7 @@ export default function StereoSystem() {
     {/* Tooltip dialog — centered on screen on mobile, anchored below the info dot on desktop */}
     {tooltipIdx > 0 && (
       <div style={isMobile
-        ? { position: 'fixed', top: '58px', left: 0, right: 0, zIndex: 199, display: 'flex', justifyContent: 'center', padding: '0 20px', boxSizing: 'border-box', pointerEvents: 'none' }
+        ? { position: 'fixed', top: 'calc(58px + env(safe-area-inset-top))', left: 0, right: 0, zIndex: 199, display: 'flex', justifyContent: 'center', padding: '0 20px', boxSizing: 'border-box', pointerEvents: 'none' }
         : { position: 'fixed', top: '58px', right: '20px', zIndex: 199, pointerEvents: 'none' }
       }>
         <div

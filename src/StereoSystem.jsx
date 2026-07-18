@@ -495,7 +495,7 @@ export default function StereoSystem() {
 
       {/* CD — 3D model, click to insert */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
-        <div style={{ fontFamily: 'cursive', fontSize: '24px', color: '#FFD700', width: '100%', textAlign: 'center', opacity: inserted ? 0 : 1, transition: 'opacity 0.3s', marginTop: '40px' }}>3 beats</div>
+        <div style={{ fontFamily: 'cursive', fontSize: '30px', color: '#ffffff', width: '100%', textAlign: 'center', opacity: inserted ? 0 : 1, transition: 'opacity 0.3s', marginTop: '40px' }}>three sounds</div>
         <div style={{ marginTop: '-40px' }}>
           <CDViewer
             phase={cdPhase}
@@ -503,7 +503,7 @@ export default function StereoSystem() {
             onInsertDone={() => { setCdPhase('inserted'); handlePlay(); }}
           />
         </div>
-        <div style={{ fontFamily: 'cursive', fontSize: '19px', color: '#FFD700', width: '100%', textAlign: 'center', opacity: inserted ? 0 : 1, transition: 'opacity 0.3s', marginTop: '-30px' }}>click cd to insert</div>
+        <div style={{ fontFamily: 'cursive', fontSize: '19px', color: '#ffffff', width: '100%', textAlign: 'center', opacity: inserted ? 0 : 1, transition: 'opacity 0.3s', marginTop: '-30px' }}>click cd to insert</div>
       </div>
 
       {/* Speakers + Rack */}
@@ -657,7 +657,7 @@ export default function StereoSystem() {
 
         {/* CD — 3D model, click to insert */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
-          <div style={{ fontFamily: 'cursive', fontSize: '21px', color: '#FFD700', width: '100%', textAlign: 'center', opacity: inserted ? 0 : 1, transition: 'opacity 0.3s', marginTop: '24px' }}>3 beats</div>
+          <div style={{ fontFamily: 'cursive', fontSize: '26px', color: '#ffffff', width: '100%', textAlign: 'center', opacity: inserted ? 0 : 1, transition: 'opacity 0.3s', marginTop: '24px' }}>three sounds</div>
           <div style={{ marginTop: '-21px' }}>
             <CDViewer
               phase={cdPhase}
@@ -665,7 +665,7 @@ export default function StereoSystem() {
               onInsertDone={() => { setCdPhase('inserted'); handlePlay(); }}
             />
           </div>
-          <div style={{ fontFamily: 'cursive', fontSize: '17px', color: '#FFD700', width: '100%', textAlign: 'center', opacity: inserted ? 0 : 1, transition: 'opacity 0.3s', marginTop: '-24px' }}>click cd to insert</div>
+          <div style={{ fontFamily: 'cursive', fontSize: '17px', color: '#ffffff', width: '100%', textAlign: 'center', opacity: inserted ? 0 : 1, transition: 'opacity 0.3s', marginTop: '-24px' }}>click cd to insert</div>
         </div>
 
         {/* Simplified deck panel */}

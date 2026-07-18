@@ -4,9 +4,9 @@ import { makePerlin3D } from './textureUtils';
 import { BACKGROUND_TEXTURES } from './backgroundTextures';
 
 const TRACKS = [
-  { label: 'TRACK 01', title: 'Inheritance', src: '/audio/track01.wav' },
-  { label: 'TRACK 02', title: 'Track 02',    src: '/audio/track02.wav' },
-  { label: 'TRACK 03', title: 'Track 03',    src: '/audio/track03.wav' },
+  { label: 'TRACK 1 - LORD', title: 'Inheritance', src: '/audio/track01.wav' },
+  { label: 'TRACK 2 - LORD', title: 'Track 02',    src: '/audio/track02.wav' },
+  { label: 'TRACK 3 - LORD', title: 'Track 03',    src: '/audio/track03.wav' },
 ];
 
 // background shape variant per track — track 1 keeps the user-selected shape,
@@ -471,14 +471,6 @@ export default function StereoSystem() {
     window.addEventListener('mouseup', onUp);
   }
 
-  function handleVolume(e) {
-    const v = parseFloat(e.target.value);
-    setVolume(v); volumeRef.current = v;
-    if (mutedRef.current) { mutedRef.current = false; setMuted(false); }
-    if (volKnobRef.current) volKnobRef.current.style.transform = `rotate(${(v * 270) - 135}deg)`;
-    applyVolume();
-  }
-
   function handleMuteToggle() {
     const next = !mutedRef.current;
     mutedRef.current = next; setMuted(next);
@@ -616,7 +608,7 @@ export default function StereoSystem() {
                   <div ref={spinCDRef} style={{ width: '17px', height: '17px', borderRadius: '50%', background: 'conic-gradient(#ccc 0deg,#f99 90deg,#9cf 200deg,#ccc 360deg)', opacity: 0, transition: 'opacity 0.4s' }} />
                 </div>
               </div>
-              <div style={{ width: '90px', height: '25px', background: '#001800', border: '1px solid #003300', borderRadius: '2px', display: 'flex', alignItems: 'center', padding: '0 7px' }}>
+              <div style={{ width: '140px', height: '25px', background: '#001800', border: '1px solid #003300', borderRadius: '2px', display: 'flex', alignItems: 'center', padding: '0 7px' }}>
                 <span ref={deckTextRef} style={{ fontSize: '11px', color: '#00cc44', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>NO DISC</span>
               </div>
               <button onClick={handleEject} disabled={!inserted} className="transport-btn"
@@ -705,7 +697,7 @@ export default function StereoSystem() {
         </div>
 
         {/* Simplified deck panel */}
-        <div style={{ width: '100%', maxWidth: '380px', marginTop: '22px', background: '#141414', borderRadius: '6px', border: '2px solid #3a3a3a', padding: '10px', display: 'flex', flexDirection: 'column', gap: '8px', boxSizing: 'border-box', boxShadow: '0 4px 20px rgba(0,0,0,0.6)' }}>
+        <div style={{ width: '100%', maxWidth: '380px', marginTop: '48px', background: '#141414', borderRadius: '6px', border: '2px solid #3a3a3a', padding: '10px', display: 'flex', flexDirection: 'column', gap: '8px', boxSizing: 'border-box', boxShadow: '0 4px 20px rgba(0,0,0,0.6)' }}>
 
           {/* Deck text + LED + eject */}
           <div style={{ background: '#212121', borderRadius: '3px', border: '1px solid #444', padding: '8px 10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -742,25 +734,14 @@ export default function StereoSystem() {
           <div style={{ display: 'flex', gap: '8px' }}>
             <button onClick={handleLast} disabled={!inserted} className="transport-btn"
               style={{ flex: 1, padding: '14px 0', fontSize: '13px', fontWeight: 700, fontFamily: 'monospace', borderRadius: '4px', border: '1px solid #555', background: '#2f2f2f', color: inserted ? '#ddd' : '#555', cursor: inserted ? 'pointer' : 'default' }}>◀◀</button>
-            <button onClick={handlePlay} disabled={!inserted || playing} className="transport-btn"
-              style={{ flex: 1, padding: '14px 0', fontSize: '13px', fontWeight: 700, fontFamily: 'monospace', borderRadius: '4px', border: `1px solid ${playing ? '#00cc44' : '#555'}`, background: playing ? '#002200' : '#2f2f2f', color: playing ? '#00cc44' : (inserted ? '#ddd' : '#555'), cursor: (inserted && !playing) ? 'pointer' : 'default' }}>▶</button>
-            <button onClick={handlePause} disabled={!inserted || !playing} className="transport-btn"
-              style={{ flex: 1, padding: '14px 0', fontSize: '13px', fontWeight: 700, fontFamily: 'monospace', borderRadius: '4px', border: `1px solid ${(inserted && !playing) ? '#cc4400' : '#555'}`, background: (inserted && !playing) ? '#220000' : '#2f2f2f', color: (inserted && !playing) ? '#cc4400' : ((inserted && playing) ? '#ddd' : '#555'), cursor: (inserted && playing) ? 'pointer' : 'default', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor"><rect x="1" width="4" height="12" /><rect x="7" width="4" height="12" /></svg>
+            <button onClick={playing ? handlePause : handlePlay} disabled={!inserted} className="transport-btn"
+              style={{ flex: 1, padding: '14px 0', fontSize: '13px', fontWeight: 700, fontFamily: 'monospace', borderRadius: '4px', border: `1px solid ${playing ? '#00cc44' : '#555'}`, background: playing ? '#002200' : '#2f2f2f', color: playing ? '#00cc44' : (inserted ? '#ddd' : '#555'), cursor: inserted ? 'pointer' : 'default', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+              {playing
+                ? <svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor"><rect x="1" width="4" height="12" /><rect x="7" width="4" height="12" /></svg>
+                : '▶'}
             </button>
             <button onClick={handleNext} disabled={!inserted} className="transport-btn"
               style={{ flex: 1, padding: '14px 0', fontSize: '13px', fontWeight: 700, fontFamily: 'monospace', borderRadius: '4px', border: '1px solid #555', background: '#2f2f2f', color: inserted ? '#ddd' : '#555', cursor: inserted ? 'pointer' : 'default' }}>▶▶</button>
-          </div>
-
-          {/* Volume */}
-          <div style={{ background: '#212121', borderRadius: '3px', border: '1px solid #444', padding: '8px 10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ fontSize: '11px', color: '#999', fontFamily: 'monospace', width: '30px', flexShrink: 0 }}>VOL</span>
-            <input type="range" min="0" max="1" step="0.01" value={volume} onChange={handleVolume} style={{ flex: 1 }} />
-            <span style={{ fontSize: '11px', color: '#00cc44', fontFamily: 'monospace', width: '28px', textAlign: 'right', flexShrink: 0 }}>{Math.round(volume * 100)}</span>
-            <button onClick={handleMuteToggle} className="transport-btn"
-              style={{ marginLeft: '10px', padding: '5px 9px', fontSize: '11px', fontWeight: 700, fontFamily: 'monospace', borderRadius: '3px', border: `1px solid ${muted ? '#cc4400' : '#555'}`, background: muted ? '#220000' : '#2f2f2f', color: muted ? '#cc4400' : '#ccc', cursor: 'pointer', lineHeight: 1, flexShrink: 0 }}>
-              MUTE
-            </button>
           </div>
         </div>
       </div>

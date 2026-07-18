@@ -52,6 +52,13 @@ const TOOLTIP_SECTIONS = [
       { text: 'Artist/producer inspo', sub: ['F1lthy', 'SoFaygo'] },
     ],
   },
+  {
+    title: '3D CD Model',
+    points: [
+      '"Very Simple CD - Disc" by Blender3D, via Sketchfab.',
+      'Licensed under CC BY 4.0 (creativecommons.org/licenses/by/4.0).',
+    ],
+  },
 ];
 
 export default function StereoSystem() {
@@ -461,8 +468,8 @@ export default function StereoSystem() {
   }
   function handleProgressMouseUp() { isSeekingRef.current = false; }
 
-  function nextTooltip() { setTooltipIdx(prev => prev === 3 ? 1 : prev + 1); }
-  function prevTooltip() { setTooltipIdx(prev => prev === 0 ? 3 : (prev === 1 ? 3 : prev - 1)); }
+  function nextTooltip() { setTooltipIdx(prev => prev === 4 ? 1 : prev + 1); }
+  function prevTooltip() { setTooltipIdx(prev => prev === 0 ? 4 : (prev === 1 ? 4 : prev - 1)); }
 
   useEffect(() => {
     if (tooltipIdx === 0) return;
@@ -760,7 +767,7 @@ export default function StereoSystem() {
             </div>
             <div style={{ flex: 1, textAlign: 'center' }}>
               <div style={{ display: 'flex', justifyContent: 'center', gap: '4px', marginBottom: '8px' }}>
-                {[1, 2, 3].map(n => (
+                {[1, 2, 3, 4].map(n => (
                   <span key={n} style={{ width: '5px', height: '5px', borderRadius: '50%', display: 'inline-block', background: n === tooltipIdx ? '#fff' : '#555' }} />
                 ))}
               </div>
